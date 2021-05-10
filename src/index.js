@@ -32,9 +32,12 @@ function createCard (data) {
         titleEl.innerText = section.title
         console.log(section.title)
 
-        let imageEl = document.createElement("h2")
+        let imageEl = document.createElement("img")
         imageEl.setAttribute("src", section["image"])
+        imageEl.setAttribute("alt", "")
+        imageEl.setAttribute("class", "image")
         console.log(section["image"])
+        console.log(imageEl)
 
         let likesDivEl = document.createElement("div")
         likesDivEl.setAttribute("class", "likes-section")
@@ -52,7 +55,7 @@ function createCard (data) {
 
         for (comment of section.comments) {
             let commentEl = document.createElement("li")
-            commentEl.innerText = comment
+            commentEl.innerText = comment.content
             commentsListEl.append(commentEl)
         }
 
@@ -69,11 +72,13 @@ function createCard (data) {
         commentFormButtonEl.setAttribute("type", "submit")
         commentFormButtonEl.innerText = "Post"
 
+        articleEl.append(titleEl, imageEl, likesDivEl, commentsListEl, commentFormEl)
+
         likesDivEl.append(spanEl, likeButtonEl)
         commentFormEl.append(commentFormInputEl, commentFormButtonEl)
 
         let imageContainerEl = document.querySelector(".image-container")
-        imageContainerEl.append(articleEl, titleEl, likesDivEl, commentsListEl, commentFormEl)
+        imageContainerEl.append(articleEl)
 
         }
     }
