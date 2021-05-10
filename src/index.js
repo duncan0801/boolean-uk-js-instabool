@@ -21,53 +21,59 @@
     <button class="comment-button" type="submit">Post</button>
 </form>
 </article> */
-function createCard (data) {
+function createEl(tag) {
+    return document.createElement(tag)
+}
+function createCards (data) {
 
     for (section of data) {
-        let articleEl = document.createElement("article")
+        let articleEl = createEl("article")
         articleEl.setAttribute("class", "image-card")
 
-        let titleEl = document.createElement("h2")
+        let titleEl = createEl("h2")
         titleEl.setAttribute("class", "title")
         titleEl.innerText = section.title
         console.log(section.title)
 
-        let imageEl = document.createElement("img")
+        let imageEl = createEl("img")
         imageEl.setAttribute("src", section["image"])
         imageEl.setAttribute("alt", "")
         imageEl.setAttribute("class", "image")
         console.log(section["image"])
         console.log(imageEl)
 
-        let likesDivEl = document.createElement("div")
+        let likesDivEl = createEl("div")
         likesDivEl.setAttribute("class", "likes-section")
 
-        let spanEl = document.createElement("span")
+        let spanEl = createEl("span")
         spanEl.setAttribute("class", "likes")
         spanEl.innerText = section["likes"]
         
-        let likeButtonEl = document.createElement("button")
+        let likeButtonEl = createEl("button")
         likeButtonEl.setAttribute("class", "like-button")
         likeButtonEl.innerText = "❤"
         
-        let commentsListEl = document.createElement("ul")
+        let commentsListEl = createEl("ul")
         commentsListEl.setAttribute("class", "comments")
 
-        for (comment of section.comments) {
-            let commentEl = document.createElement("li")
-            commentEl.innerText = comment.content
-            commentsListEl.append(commentEl)
+        function addComments() {
+            for (comment of section.comments) {
+                let commentEl = createEl("li")
+                commentEl.innerText = comment.content
+                commentsListEl.append(commentEl)
+            }
         }
+        addComments()
 
-        let commentFormEl = document.createElement("form")
+        let commentFormEl = createEl("form")
         commentFormEl.setAttribute("class", "comment-form")
 
-        let commentFormInputEl = document.createElement("input")
+        let commentFormInputEl = createEl("input")
         commentFormInputEl.setAttribute("class", "comment-input")
         commentFormInputEl.setAttribute("type", "text")
         commentFormInputEl.setAttribute("placeholder", "Add a comment...")
 
-        let commentFormButtonEl = document.createElement("button")
+        let commentFormButtonEl = createEl("button")
         commentFormButtonEl.setAttribute("class", "comment-button")
         commentFormButtonEl.setAttribute("type", "submit")
         commentFormButtonEl.innerText = "Post"
@@ -92,7 +98,7 @@ fetch("http://localhost:3000/images/")
         )
         .then(function (data) {
             console.log(data)
-            createCard(data)
+            createCards(data)
         })
         
 
