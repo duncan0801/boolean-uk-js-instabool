@@ -21,12 +21,29 @@
     <button class="comment-button" type="submit">Post</button>
 </form>
 </article> */
+
+
+/* DAY 2:
+- ✔ Have the like button adding 1 like to the respective counter each time you click it, and display the changes
+1. recognise someone cliccked the like button, update the number of likes in the data base, update the like section on the page
+
+- Have the comments form to add another comment to the respective post, and display the changes
+1. addEventListener for submit button
+
+- The data must be persisted in the server so that when you refresh the page it doesn't go away
+
+Tips
+- Make some requests to your server and inspect the response, so you can check the data structure before start coding
+- Focus first on render the data onto your page
+- Try to think which kind of HTTP method you should use on each occasion
+- Try to use function scopes to your advantage
+*/
+
 function createEl(tag) {
     return document.createElement(tag)
 }
-function createCards (data) {
+function createCard (section) {
 
-    for (section of data) {
         let articleEl = createEl("article")
         articleEl.setAttribute("class", "image-card")
 
@@ -53,12 +70,15 @@ function createCards (data) {
         likeButtonEl.setAttribute("class", "like-button")
         likeButtonEl.innerText = "❤"
         
+        
         let commentsListEl = createEl("ul")
         commentsListEl.setAttribute("class", "comments")
 
         function addComments() {
+            commentsListEl.innerHTML = ""
             for (comment of section.comments) {
-                let commentEl = createEl("li")
+
+                const commentEl = createEl("li")
                 commentEl.innerText = comment.content
                 commentsListEl.append(commentEl)
             }
@@ -70,6 +90,7 @@ function createCards (data) {
 
         let commentFormInputEl = createEl("input")
         commentFormInputEl.setAttribute("class", "comment-input")
+        commentFormInputEl.setAttribute("id", `comment-input-${section.id}`)
         commentFormInputEl.setAttribute("type", "text")
         commentFormInputEl.setAttribute("placeholder", "Add a comment...")
 
@@ -86,19 +107,85 @@ function createCards (data) {
         let imageContainerEl = document.querySelector(".image-container")
         imageContainerEl.append(articleEl)
 
-        }
+
+        //like button event listener 
+        likeButtonEl.addEventListener("click", function(){
+            
+            fetch(`http://localhost:3000/images/${section.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"likes": ++section.likes})
+            })
+            .then(function (response) {
+               
+                if (response.ok) {
+                    return response.json()
+                }
+                else {
+                    alert(`There was an error ${response.status}`)
+                }  
+            })
+            .then(function (response) {
+                    spanEl.innerText = response.likes
+            })
+        })
+
+        //add comment 
+        commentFormEl.addEventListener("submit", function (e){
+            
+            e.preventDefault() 
+            let commentToAdd =  {
+                "content": commentFormInputEl.value,
+                "imageId": section.id
+                }
+            
+            fetch(`http://localhost:3000/comments/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(commentToAdd)
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    console.log("Success!")
+    
+                    newCommentEl = createEl("li")
+                    newCommentEl.innerText = commentFormInputEl.value
+                    commentsListEl.append(newCommentEl)
+                    commentFormEl.reset()
+
+                }
+                else {
+                    alert(`There was an error ${response.status}`)
+                }
+            })
+        })
+
     }
+function createCards(data) {
+
+    for (section of data) {
+        createCard(section)
+    }
+
+}
 
 fetch("http://localhost:3000/images/")
         .then(function (promise) {
             
             let data = promise.json()
             return data
+
         }
         )
         .then(function (data) {
             console.log(data)
-            createCards(data)
+
+                createCards(data)
+
         })
         
 
